@@ -12,7 +12,7 @@ import kotlin.math.sin
 fun createMap(plugin: TowersOfFortune): List<Location> {
     val worldCreator = WorldCreator("game_1").apply {
         type(WorldType.FLAT)
-        generatorSettings("""{"lakes"\:false,"features"\:false,"layers"\:[{"block"\:"minecraft\:air","height"\:1}],"structures"\:{"structures"\:{}}}""")
+        generatorSettings("""{"lakes":false,"features":false,"layers":[{"block":"minecraft:air","height":1}],"structures":{"structures":{}}}""")
         generateStructures(false)
     }
 
