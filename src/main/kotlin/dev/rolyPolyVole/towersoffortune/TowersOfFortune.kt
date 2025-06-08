@@ -37,6 +37,7 @@ class TowersOfFortune : JavaPlugin(), Listener {
         if (event.clickedBlock?.type != Material.STONE_BUTTON || game.started || game.isFull) return
 
         game.players.add(event.player)
+        game.players.forEach { it.sendMessage(Messages.JOINED_GAME.with(event.player.name)) }
 
         if (game.isFull) game.start()
     }
@@ -50,6 +51,7 @@ class TowersOfFortune : JavaPlugin(), Listener {
             game.players.forEach { it.sendMessage(Messages.PLAYER_DISCONNECTED.with(event.player)) }
         } else {
             game.players.remove(event.player)
+            game.players.forEach { it.sendMessage(Messages.LEFT_GAME.with(event.player.name)) }
         }
     }
 }
