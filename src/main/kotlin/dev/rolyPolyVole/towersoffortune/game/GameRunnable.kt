@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 
 class GameRunnable(private val plugin: TowersOfFortune, private val game: Game) : BukkitRunnable() {
+    private val interval = 60
     var age = 0
 
     fun start() {
@@ -19,7 +20,7 @@ class GameRunnable(private val plugin: TowersOfFortune, private val game: Game) 
     override fun run() {
         age++
 
-        if (age % 60 == 0) {
+        if (age % interval == 0) {
             val item = ItemStack(Material.entries.filter(Material::isItem).random())
 
             game.players.forEach { it.inventory.addItem(item) }
