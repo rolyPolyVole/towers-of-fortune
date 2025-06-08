@@ -16,7 +16,7 @@ description = "A Minecraft minigame"
 
 val pluginName = "TowersOfFortune"
 val paperApiVersion = "1.21"
-val mainClassPath ="$group.towwersoffortune.TowersOfFortune"
+val mainClassPath ="$group.towersoffortune.TowersOfFortune"
 
 paperPluginYaml {
     name = pluginName
