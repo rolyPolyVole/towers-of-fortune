@@ -1,4 +1,0 @@
-name: towers-of-fortune
-version: '1.0-SNAPSHOT'
-main: dev.rolyPolyVole.towersoffortune.TowersOfFortune
-api-version: '1.21'

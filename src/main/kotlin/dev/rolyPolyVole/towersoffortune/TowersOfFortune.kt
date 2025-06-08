@@ -1,14 +1,55 @@
 package dev.rolyPolyVole.towersoffortune
 
+import dev.rolyPolyVole.towersoffortune.game.Game
+import dev.rolyPolyVole.towersoffortune.game.createMap
+import dev.rolyPolyVole.towersoffortune.util.Messages
+import org.bukkit.Material
+import org.bukkit.World
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.plugin.java.JavaPlugin
 
-class TowersOfFortune : JavaPlugin() {
+class TowersOfFortune : JavaPlugin(), Listener {
+    lateinit var lobbyWorld: World
+    lateinit var game: Game
 
     override fun onEnable() {
-        // Plugin startup logic
+        logger.info("Enabling Towers of Fortune")
+
+        val spawnLocations = createMap(this)
+
+        lobbyWorld = server.worlds.first()
+        game = Game(this, server.getWorld("game_1")!!, spawnLocations)
+
+        server.pluginManager.registerEvents(this, this)
     }
 
     override fun onDisable() {
-        // Plugin shutdown logic
+        logger.info("Disabling Towers of Fortune")
+
+        server.unloadWorld("game_1", false)
+    }
+
+    @EventHandler
+    fun onButtonClick(event: PlayerInteractEvent) {
+        if (event.clickedBlock?.type != Material.STONE_BUTTON || game.started || game.isFull) return
+
+        game.players.add(event.player)
+
+        if (game.isFull) game.start()
+    }
+
+    @EventHandler
+    fun onPlayerQuit(event: PlayerQuitEvent) {
+        if (game.started) {
+            event.player.teleport(lobbyWorld.spawnLocation)
+            game.players.remove(event.player)
+
+            game.players.forEach { it.sendMessage(Messages.PLAYER_DISCONNECTED.with(event.player)) }
+        } else {
+            game.players.remove(event.player)
+        }
     }
 }
