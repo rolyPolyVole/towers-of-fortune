@@ -23,8 +23,8 @@ class EventHandler(private val plugin: TowersOfFortune, private val game: Game) 
         event.isCancelled = true
 
         val message =
-            if (event.player.killer == null) Messages.PLAYER_DIED.with(event.player)
-            else Messages.PLAYER_KILLED.with(event.player, event.player.killer!!)
+            if (event.player.killer == null) Messages.PLAYER_DIED.with(event.player.name)
+            else Messages.PLAYER_KILLED.with(event.player.name, event.player.killer!!.name)
 
         game.players.forEach { it.sendMessage(message) }
 
