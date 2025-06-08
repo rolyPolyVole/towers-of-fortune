@@ -34,7 +34,7 @@ class TowersOfFortune : JavaPlugin(), Listener {
 
     @EventHandler
     fun onButtonClick(event: PlayerInteractEvent) {
-        if (event.clickedBlock?.type != Material.STONE_BUTTON || game.started || game.isFull || game.players.contains(event.player)) return
+        if (event.clickedBlock?.type != Material.STONE_BUTTON || !event.action.isRightClick || game.started || game.isFull || game.players.contains(event.player)) return
 
         game.players.add(event.player)
         game.players.forEach { it.sendMessage(Messages.JOINED_GAME.with(event.player.name)) }
