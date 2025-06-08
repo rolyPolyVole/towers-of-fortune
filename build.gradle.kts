@@ -1,11 +1,37 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
+import xyz.jpenilla.resourcefactory.bukkit.bukkitPluginYaml
+
 plugins {
     kotlin("jvm") version "2.2.0-RC2"
     id("com.gradleup.shadow") version "8.3.0"
+    id("xyz.jpenilla.resource-factory-paper-convention") version "1.2.0"
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.16"
 }
 
 group = "dev.rolyPolyVole"
 version = "1.0-SNAPSHOT"
+description = "A Minecraft minigame"
+
+val pluginName = "TowersOfFortune"
+val paperApiVersion = "1.21"
+val mainClassPath ="$group.towwersoffortune.TowersOfFortune"
+
+paperPluginYaml {
+    name = pluginName
+    description = project.description
+    authors = listOf("Esoteric Foundation", "rolyPolyVole", "Esoteric Enderman")
+    website = "https://github.com/fireworkwars/lobby-plugin"
+
+    apiVersion = paperApiVersion
+
+    main = mainClassPath
+}
+
+bukkitPluginYaml {
+    load = BukkitPluginYaml.PluginLoadOrder.POSTWORLD
+}
 
 repositories {
     mavenCentral()
@@ -18,33 +44,48 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("$paperApiVersion-R0.1-SNAPSHOT")
+
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }
 
-tasks {
-    runServer {
-        // Configure the Minecraft version for our task.
-        // This is the only required configuration besides applying the plugin.
-        // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.21")
-    }
-}
-
 val targetJavaVersion = 21
+
 kotlin {
     jvmToolchain(targetJavaVersion)
 }
 
-tasks.build {
-    dependsOn("shadowJar")
-}
+tasks {
+    shadowJar {
+        minimize {
+            exclude(dependency("org.jetbrains.kotlin:kotlin-reflect"))
+        }
+    }
 
-tasks.processResources {
-    val props = mapOf("version" to version)
-    inputs.properties(props)
-    filteringCharset = "UTF-8"
-    filesMatching("plugin.yml") {
-        expand(props)
+    build {
+        dependsOn(shadowJar)
+    }
+
+    assemble {
+        dependsOn(reobfJar)
+    }
+
+    compileJava {
+        options.encoding = Charsets.UTF_8.name()
+        options.release.set(21)
+    }
+
+    compileKotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
+    }
+
+    javadoc {
+        options.encoding = Charsets.UTF_8.name()
+    }
+
+    processResources {
+        filteringCharset = Charsets.UTF_8.name()
     }
 }
