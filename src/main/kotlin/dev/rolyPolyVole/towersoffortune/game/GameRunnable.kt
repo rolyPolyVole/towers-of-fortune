@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 
 class GameRunnable(private val plugin: TowersOfFortune, private val game: Game) : BukkitRunnable() {
-    private val interval = 60
+    private val interval = 50
     var age = 0
 
     fun start() {
