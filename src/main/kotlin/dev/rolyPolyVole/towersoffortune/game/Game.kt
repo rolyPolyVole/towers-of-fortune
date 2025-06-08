@@ -7,7 +7,7 @@ import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
 
-class Game(private val plugin: TowersOfFortune, val world: World, private val spawnLocations: List<Location>) {
+class Game(private val plugin: TowersOfFortune, val world: World, private val spawnLocations: List<Location>, private val startLimit: Int) {
     private val eventHandler = EventHandler(plugin, this)
     private var runnable = GameRunnable(plugin, this)
 
@@ -15,7 +15,7 @@ class Game(private val plugin: TowersOfFortune, val world: World, private val sp
     var started = false
 
     val isFull: Boolean
-        get() = players.size == spawnLocations.size
+        get() = players.size == startLimit
 
     fun start() {
         started = true

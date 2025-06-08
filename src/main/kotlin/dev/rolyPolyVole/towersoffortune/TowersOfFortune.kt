@@ -21,7 +21,7 @@ class TowersOfFortune : JavaPlugin(), Listener {
         val spawnLocations = createMap(this)
 
         lobbyWorld = server.worlds.first()
-        game = Game(this, server.getWorld("game_1")!!, spawnLocations)
+        game = Game(this, server.getWorld("game_1")!!, spawnLocations, 2)
 
         server.pluginManager.registerEvents(this, this)
     }
