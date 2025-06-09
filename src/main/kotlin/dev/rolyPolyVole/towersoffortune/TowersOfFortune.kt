@@ -9,11 +9,15 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.world.WorldLoadEvent
+import org.bukkit.event.world.WorldUnloadEvent
 import org.bukkit.plugin.java.JavaPlugin
 
 class TowersOfFortune : JavaPlugin(), Listener {
     lateinit var lobbyWorld: World
     lateinit var game: Game
+
+    var isWorldLoaded = false
 
     override fun onEnable() {
         logger.info("Enabling Towers of Fortune")
@@ -34,7 +38,7 @@ class TowersOfFortune : JavaPlugin(), Listener {
 
     @EventHandler
     fun onButtonClick(event: PlayerInteractEvent) {
-        if (event.clickedBlock?.type != Material.STONE_BUTTON || !event.action.isRightClick || game.started || game.isFull || game.players.contains(event.player)) return
+        if (event.clickedBlock?.type != Material.STONE_BUTTON || !event.action.isRightClick || !isWorldLoaded || game.started || game.isFull || game.players.contains(event.player)) return
 
         game.players.add(event.player)
         game.players.forEach { it.sendMessage(Messages.JOINED_GAME.with(event.player.name)) }
@@ -52,6 +56,20 @@ class TowersOfFortune : JavaPlugin(), Listener {
         } else {
             game.players.remove(event.player)
             game.players.forEach { it.sendMessage(Messages.LEFT_GAME.with(event.player.name)) }
+        }
+    }
+
+    @EventHandler
+    fun onWorldLoad(event: WorldLoadEvent) {
+        if (event.world.name == "game_1") {
+            isWorldLoaded = true
+        }
+    }
+
+    @EventHandler
+    fun onWorldUnload(event: WorldUnloadEvent) {
+        if (event.world.name == "game_1") {
+            isWorldLoaded = false
         }
     }
 }
