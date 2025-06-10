@@ -47,7 +47,7 @@ fun createMap(plugin: TowersOfFortune): List<Location> {
             world.getBlockAt(x, y, z).type = Material.BEDROCK
         }
 
-        spawnLocations.add(Location(world, x.toDouble() + 0.5, baseY + pillarHeight + 1.0, z.toDouble() + 0.5))
+        spawnLocations.add(Location(world, x.toDouble() + 0.5, baseY + pillarHeight + 3.5, z.toDouble() + 0.5))
     }
 
     return spawnLocations
