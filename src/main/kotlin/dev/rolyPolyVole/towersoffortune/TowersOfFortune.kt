@@ -38,6 +38,7 @@ class TowersOfFortune : JavaPlugin(), Listener {
 
     @EventHandler
     fun onButtonClick(event: PlayerInteractEvent) {
+        println(isWorldLoaded)
         if (event.clickedBlock?.type != Material.STONE_BUTTON || !event.action.isRightClick || !isWorldLoaded || game.started || game.isFull || game.players.contains(event.player)) return
 
         game.players.add(event.player)
