@@ -17,7 +17,7 @@ class TowersOfFortune : JavaPlugin(), Listener {
     lateinit var lobbyWorld: World
     lateinit var game: Game
 
-    var isWorldLoaded = false
+    var isWorldLoaded = true
 
     override fun onEnable() {
         logger.info("Enabling Towers of Fortune")
