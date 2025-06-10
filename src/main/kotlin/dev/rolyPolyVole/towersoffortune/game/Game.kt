@@ -2,6 +2,7 @@ package dev.rolyPolyVole.towersoffortune.game
 
 import dev.rolyPolyVole.towersoffortune.TowersOfFortune
 import dev.rolyPolyVole.towersoffortune.util.Messages
+import dev.rolyPolyVole.towersoffortune.util.format
 import dev.rolyPolyVole.towersoffortune.util.sendMessage
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -38,8 +39,8 @@ class Game(private val plugin: TowersOfFortune, val world: World, private val sp
         runnable.stop()
         runnable = GameRunnable(plugin, this)
 
-        print(players.size)
-        print(winner.name)
+        plugin.server.broadcast(players.size.toString().format())
+        plugin.server.broadcast(winner.name.toString().format())
 
         players.forEach { it.gameMode = GameMode.SURVIVAL }
         healPlayers()
