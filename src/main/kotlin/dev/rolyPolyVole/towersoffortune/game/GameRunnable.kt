@@ -22,7 +22,7 @@ class GameRunnable(private val plugin: TowersOfFortune, private val game: Game) 
 
         if (age % interval == 0) {
             game.players.forEach {
-                val item = ItemStack(Material.entries.filter(Material::isItem).filterNot(Material::isLegacy).random())
+                val item = ItemStack(Material.entries.filterNot(Material::isLegacy).filter(Material::isItem).random())
                 it.inventory.addItem(item)
             }
         }
