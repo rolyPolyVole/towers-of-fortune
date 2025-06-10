@@ -19,12 +19,15 @@ class EventHandler(private val plugin: TowersOfFortune, private val game: Game) 
 
     @EventHandler
     fun onPlayerDeath(event: PlayerDeathEvent) {
-        event.player.gameMode = GameMode.SPECTATOR
+        val player = event.player
+
+        player.gameMode = GameMode.SPECTATOR
+        player.inventory.clear()
         event.isCancelled = true
 
         val message =
-            if (event.player.killer == null) Messages.PLAYER_DIED.with(event.player.name)
-            else Messages.PLAYER_KILLED.with(event.player.name, event.player.killer!!.name)
+            if (player.killer == null) Messages.PLAYER_DIED.with(player.name)
+            else Messages.PLAYER_KILLED.with(player.name, player.killer!!.name)
 
         game.players.forEach { it.sendMessage(message) }
 

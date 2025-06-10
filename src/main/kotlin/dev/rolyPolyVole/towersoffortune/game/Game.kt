@@ -6,6 +6,7 @@ import dev.rolyPolyVole.towersoffortune.util.format
 import dev.rolyPolyVole.towersoffortune.util.sendMessage
 import org.bukkit.GameMode
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.entity.Player
 
@@ -39,13 +40,10 @@ class Game(private val plugin: TowersOfFortune, val world: World, private val sp
         runnable.stop()
         runnable = GameRunnable(plugin, this)
 
-        plugin.server.broadcast(players.size.toString().format())
-        plugin.server.broadcast(winner.name.toString().format())
-
         players.forEach { it.gameMode = GameMode.SURVIVAL }
         healPlayers()
 
-        players.forEach { it.sendMessage(Messages.PLAYER_WON, winner.name) }
+        players.forEach { it.sendMessage(Messages.PLAYER_WON.with(winner.name)) }
         players.forEach { it.teleport(plugin.lobbyWorld.spawnLocation) }
         players.clear()
 
@@ -54,6 +52,7 @@ class Game(private val plugin: TowersOfFortune, val world: World, private val sp
 
     private fun healPlayers() {
         players.forEach {
+            it.inventory.clear()
             it.health = 20.0
             it.foodLevel = 20
             it.saturation = 20.0F
