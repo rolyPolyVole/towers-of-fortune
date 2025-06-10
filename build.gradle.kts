@@ -30,7 +30,7 @@ paperPluginYaml {
 }
 
 bukkitPluginYaml {
-    load = BukkitPluginYaml.PluginLoadOrder.POSTWORLD
+    load = BukkitPluginYaml.PluginLoadOrder.STARTUP
 }
 
 repositories {
