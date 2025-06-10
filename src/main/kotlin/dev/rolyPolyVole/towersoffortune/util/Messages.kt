@@ -9,7 +9,7 @@ enum class Messages(val message: String) {
     GUIDE("<yellow>You will receive a random item every few seconds!</yellow><newline/><yellow>The last one standing wins!</yellow>"),
 
     PLAYER_DIED("<red><gray>{0}</gray> has died!</red>"),
-    PLAYER_KILLED("<red><gray>{0}</gray> was killed by <gray>{1}!</gray><red>"),
+    PLAYER_KILLED("<red><gray>{0}</gray> was killed by <gray>{1}</gray>!<red>"),
     PLAYER_DISCONNECTED("<yellow><blue>{0}</blue> has disconnected from the game!</yellow>"),
 
     PLAYER_WON("<green><bold><dark_green>{0}</dark_green></bold> has won the game!</green>");
