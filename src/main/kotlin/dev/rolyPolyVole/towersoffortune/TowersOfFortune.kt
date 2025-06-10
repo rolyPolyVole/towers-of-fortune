@@ -19,10 +19,6 @@ class TowersOfFortune : JavaPlugin(), Listener {
 
     var isWorldLoaded = false
 
-    override fun onLoad() {
-        server.pluginManager.registerEvents(this, this)
-    }
-
     override fun onEnable() {
         logger.info("Enabling Towers of Fortune")
 
@@ -30,6 +26,8 @@ class TowersOfFortune : JavaPlugin(), Listener {
 
         lobbyWorld = server.worlds.first()
         game = Game(this, server.getWorld("game_1")!!, spawnLocations, 2)
+
+        server.pluginManager.registerEvents(this, this)
     }
 
     override fun onDisable() {
