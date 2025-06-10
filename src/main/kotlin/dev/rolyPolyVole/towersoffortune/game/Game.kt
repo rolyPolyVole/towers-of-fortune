@@ -34,6 +34,8 @@ class Game(private val plugin: TowersOfFortune, val world: World, private val sp
         runnable.stop()
         runnable = GameRunnable(plugin, this)
 
+        print(winner.name)
+
         players.forEach { it.sendMessage(Messages.PLAYER_WON, winner.name) }
         players.forEach { it.teleport(plugin.lobbyWorld.spawnLocation) }
         players.clear()
