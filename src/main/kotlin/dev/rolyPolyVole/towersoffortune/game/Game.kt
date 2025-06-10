@@ -10,7 +10,7 @@ import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.entity.Player
 
-class Game(private val plugin: TowersOfFortune, val world: World, private val spawnLocations: List<Location>, private val startLimit: Int) {
+class Game(private val plugin: TowersOfFortune, var world: World, private val spawnLocations: List<Location>, private val startLimit: Int) {
     private val eventHandler = EventHandler(plugin, this)
     private var runnable = GameRunnable(plugin, this)
 
@@ -22,6 +22,8 @@ class Game(private val plugin: TowersOfFortune, val world: World, private val sp
 
     fun start() {
         started = true
+
+        refreshWorldReferences()
 
         eventHandler.register()
         runnable.start()
@@ -63,5 +65,12 @@ class Game(private val plugin: TowersOfFortune, val world: World, private val sp
         plugin.server.unloadWorld("game_1", false)
 
         createMap(plugin)
+    }
+
+    private fun refreshWorldReferences() {
+        world = plugin.server.getWorld("game_1")!!
+        spawnLocations.forEach {
+            it.world = world
+        }
     }
 }
