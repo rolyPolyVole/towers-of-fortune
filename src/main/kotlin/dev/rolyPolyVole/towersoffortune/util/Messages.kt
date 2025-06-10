@@ -10,6 +10,7 @@ enum class Messages(val message: String) {
 
     PLAYER_DIED("<red><gray>{0}</gray> has died!</red>"),
     PLAYER_KILLED("<red><gray>{0}</gray> was killed by <gray>{1}</gray>!<red>"),
+    PLAYER_KILLED_BY_SPAWNED_MOB("<red><gray>{0}</gray> was killed by <gray>{1}'s</gray> <dark_green>{2}</dark_green></red>"),
     PLAYER_DISCONNECTED("<yellow><blue>{0}</blue> has disconnected from the game!</yellow>"),
 
     PLAYER_WON("<green><bold><dark_green>{0}</dark_green></bold> has won the game!</green>");
