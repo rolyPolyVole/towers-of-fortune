@@ -69,6 +69,8 @@ class Game(private val plugin: TowersOfFortune, private val settings: GameSettin
         runnable.start()
         started = true
 
+        glassBlocks.forEach { it.type = Material.AIR }
+
         players.forEach {
             it.sendTitlePart(TitlePart.TITLE, Messages.START_TITLE.format())
             it.sendTitlePart(TitlePart.SUBTITLE, Messages.START_SUBTITLE.format())
