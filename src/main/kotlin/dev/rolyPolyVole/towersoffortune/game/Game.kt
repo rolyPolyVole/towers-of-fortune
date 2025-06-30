@@ -5,10 +5,8 @@ import dev.rolyPolyVole.towersoffortune.data.GameSettings
 import dev.rolyPolyVole.towersoffortune.functions.createMap
 import dev.rolyPolyVole.towersoffortune.util.Messages
 import net.kyori.adventure.title.TitlePart
-import org.bukkit.Bukkit
-import org.bukkit.GameMode
-import org.bukkit.Location
-import org.bukkit.World
+import org.bukkit.*
+import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -24,12 +22,16 @@ class Game(private val plugin: TowersOfFortune, private val settings: GameSettin
 
     lateinit var world: World
     lateinit var spawnLocations: List<Location>
+    lateinit var glassBlocks: List<Block>
     lateinit var centerLocation: Location
 
     fun createWorld() {
-        spawnLocations = createMap(settings)
-        world = settings.getWorld()
-        centerLocation = Location(world, 0.0, 128.0, 0.0)
+        val mapData = createMap(settings)
+
+        world = mapData.world
+        spawnLocations = mapData.spawnLocations
+        glassBlocks = mapData.glassBlocks
+        centerLocation = mapData.centerLocation
 
         eventHandler.register()
         eventHandler.isGameOngoing = true

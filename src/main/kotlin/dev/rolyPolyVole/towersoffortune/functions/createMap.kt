@@ -1,7 +1,9 @@
 package dev.rolyPolyVole.towersoffortune.functions
 
+import dev.rolyPolyVole.towersoffortune.data.CreatedMapData
 import dev.rolyPolyVole.towersoffortune.data.GameSettings
 import org.bukkit.*
+import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import kotlin.math.cos
 import kotlin.math.sin
@@ -31,7 +33,7 @@ fun generateWorld(settings: GameSettings): World {
     return world
 }
 
-fun createMap(settings: GameSettings): List<Location> {
+fun createMap(settings: GameSettings): CreatedMapData {
     val world = generateWorld(settings)
 
     val radius = 20
@@ -52,6 +54,7 @@ fun createMap(settings: GameSettings): List<Location> {
     val pillarHeight = 50
 
     val spawnLocations = mutableListOf<Location>()
+    val glassBlocks = mutableListOf<Block>()
 
     for (i in 0 until 8) {
         val angle = Math.toRadians(i * 45.0)
@@ -72,11 +75,13 @@ fun createMap(settings: GameSettings): List<Location> {
         floor.type = Material.GLASS
         roof.type = Material.GLASS
 
+        glassBlocks.addAll(listOf(floor, roof))
+
         listOf(feet, head).forEach {
-            it.getRelative(BlockFace.NORTH).type = Material.GLASS
-            it.getRelative(BlockFace.WEST).type = Material.GLASS
-            it.getRelative(BlockFace.EAST).type = Material.GLASS
-            it.getRelative(BlockFace.SOUTH).type = Material.GLASS
+            it.getRelative(BlockFace.NORTH).apply{ glassBlocks.add(it) }.type = Material.GLASS
+            it.getRelative(BlockFace.WEST).apply{ glassBlocks.add(it) }.type = Material.GLASS
+            it.getRelative(BlockFace.EAST).apply{ glassBlocks.add(it) }.type = Material.GLASS
+            it.getRelative(BlockFace.SOUTH).apply{ glassBlocks.add(it) }.type = Material.GLASS
         }
 
         // Wood around the base of each pillar
@@ -91,5 +96,5 @@ fun createMap(settings: GameSettings): List<Location> {
         spawnLocations.add(Location(world, x.toDouble() + 0.5, baseY + pillarHeight + 3.0, z.toDouble() + 0.5))
     }
 
-    return spawnLocations
+    return CreatedMapData(world, spawnLocations, glassBlocks, Location(world, 0.0, baseY + pillarHeight + 1.0, 0.0))
 }
