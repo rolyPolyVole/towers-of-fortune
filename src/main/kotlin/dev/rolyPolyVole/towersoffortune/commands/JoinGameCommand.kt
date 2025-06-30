@@ -31,6 +31,8 @@ class JoinGameCommand(private val plugin: TowersOfFortune) : CommandAPICommand("
         val game = plugin.gameManager.getGame(worldNameArg)
 
         if (game == null) return player.sendMessage(Messages.GAME_DOES_NOT_EXIST.format())
+        if (game.isPlayerInGame(player)) return player.sendMessage(Messages.ALREADY_IN_GAME.format())
+        if (game.started) return player.sendMessage(Messages.GAME_ALREADY_STARTED.format())
 
         game.addPlayer(player)
     }
