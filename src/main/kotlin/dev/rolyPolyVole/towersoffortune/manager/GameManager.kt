@@ -41,6 +41,10 @@ class GameManager(private val plugin: TowersOfFortune) : Listener {
         return loadStates[worldName] ?: false
     }
 
+    fun getAllGameWorldNames(): List<String> {
+        return games.keys.toList()
+    }
+
     @EventHandler
     fun onWorldLoad(event: WorldLoadEvent) {
         val name = event.world.name

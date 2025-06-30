@@ -2,10 +2,12 @@ package dev.rolyPolyVole.towersoffortune.commands
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.Argument
+import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.rolyPolyVole.towersoffortune.TowersOfFortune
 import dev.rolyPolyVole.towersoffortune.util.Messages
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class JoinGameCommand(private val plugin: TowersOfFortune) : CommandAPICommand("join") {
@@ -22,7 +24,10 @@ class JoinGameCommand(private val plugin: TowersOfFortune) : CommandAPICommand("
     }
     
     private fun getWorldNameArgument(): Argument<String> {
+        val suggestions = ArgumentSuggestions.strings<CommandSender>(plugin.gameManager.getAllGameWorldNames())
+
         return StringArgument(worldNameArgumentNodeName)
+            .includeSuggestions(suggestions)
             .setOptional(false)
     }
 
