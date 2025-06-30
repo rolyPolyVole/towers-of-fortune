@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "dev.rolyPolyVole"
-version = "1.0-SNAPSHOT"
+version = "2.0.0"
 description = "A Minecraft minigame"
 
 val pluginName = "TowersOfFortune"
