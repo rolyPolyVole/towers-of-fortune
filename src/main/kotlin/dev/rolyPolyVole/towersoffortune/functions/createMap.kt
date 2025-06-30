@@ -85,8 +85,8 @@ fun createMap(settings: GameSettings): CreatedMapData {
         }
 
         // Wood around the base of each pillar
-        for (xOffset in -1 until 1) {
-            for (zOffset in -1 until 1) {
+        for (xOffset in (-1..1)) {
+            for (zOffset in (-1..1)) {
                 if (xOffset == 0 && zOffset == 0) continue
 
                 world.getBlockAt(x + xOffset, baseY + 1, z + zOffset).type = settings.woodMaterial
