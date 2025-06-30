@@ -30,6 +30,9 @@ class Game(private val plugin: TowersOfFortune, private val settings: GameSettin
         spawnLocations = createMap(settings)
         world = settings.getWorld()
         centerLocation = Location(world, 0.0, 128.0, 0.0)
+
+        eventHandler.register()
+        eventHandler.isGameOngoing = true
     }
 
     fun addPlayer(player: Player) {
@@ -61,11 +64,8 @@ class Game(private val plugin: TowersOfFortune, private val settings: GameSettin
     }
 
     fun start() {
-        eventHandler.register()
         runnable.start()
-
         started = true
-        eventHandler.isGameOngoing = true
 
         players.forEach {
             it.sendTitlePart(TitlePart.TITLE, Messages.START_TITLE.format())
