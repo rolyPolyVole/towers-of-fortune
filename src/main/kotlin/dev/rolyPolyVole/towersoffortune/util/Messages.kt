@@ -8,10 +8,14 @@ enum class Messages(val message: String) {
     WORLD_ALREADY_USED("<red>This world is already being used!</red>"),
     GAME_DOES_NOT_EXIST("<red>This game does not exist!</red>"),
     NOT_IN_GAME("<red>You are not in a game!</red>"),
+    ALREADY_IN_GAME("<red>You are already in a game!</red>"),
+    GAME_ALREADY_STARTED("<red>The game has already started!</red>"),
 
     JOINED_GAME("<yellow><blue>{0}</blue> has joined the game!</yellow>"),
     LEFT_GAME("<yellow><blue>{0}</blue> has left the game!</yellow>"),
 
+    START_TITLE("<dark_aqua>Towers of Fortune</dark_aqua>"),
+    START_SUBTITLE("<aqua>Good Luck!</aqua>"),
     GUIDE("<yellow>You will receive a random item every few seconds!</yellow><newline/><yellow>The last one standing wins!</yellow>"),
 
     PLAYER_DIED("<red><gray>{0}</gray> has died!</red>"),

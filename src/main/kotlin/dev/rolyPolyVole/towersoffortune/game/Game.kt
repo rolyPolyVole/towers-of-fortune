@@ -4,7 +4,7 @@ import dev.rolyPolyVole.towersoffortune.TowersOfFortune
 import dev.rolyPolyVole.towersoffortune.data.GameSettings
 import dev.rolyPolyVole.towersoffortune.functions.createMap
 import dev.rolyPolyVole.towersoffortune.util.Messages
-import net.kyori.adventure.text.Component
+import net.kyori.adventure.title.TitlePart
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -68,10 +68,12 @@ class Game(private val plugin: TowersOfFortune, private val settings: GameSettin
         eventHandler.isGameOngoing = true
 
         players.forEach {
+            it.sendTitlePart(TitlePart.TITLE, Messages.START_TITLE.format())
+            it.sendTitlePart(TitlePart.SUBTITLE, Messages.START_SUBTITLE.format())
+            it.sendMessage(Messages.GUIDE.format())
+
             it.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, 2 * 20, 1))
         }
-
-        players.forEach { it.sendMessage(Component.text("good luck")) }
     }
 
     fun end() {
