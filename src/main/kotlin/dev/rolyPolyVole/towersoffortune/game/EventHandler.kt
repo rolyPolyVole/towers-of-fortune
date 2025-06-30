@@ -1,28 +1,25 @@
 package dev.rolyPolyVole.towersoffortune.game
 
 import dev.rolyPolyVole.towersoffortune.TowersOfFortune
-import dev.rolyPolyVole.towersoffortune.util.Messages
-import org.bukkit.GameMode
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.NamespacedKey
+import dev.rolyPolyVole.towersoffortune.tracking.KillTracker
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
+import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
-import org.bukkit.event.EventHandler
-import org.bukkit.event.block.Action
-import org.bukkit.event.entity.CreatureSpawnEvent
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.persistence.PersistentDataType
-import java.util.UUID
+import org.bukkit.event.player.PlayerChangedWorldEvent
+import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 
 class EventHandler(private val plugin: TowersOfFortune, private val game: Game) : Listener {
-    private val mobOwnerKey = NamespacedKey(plugin, "mob_owner")
-    private val playerToMobEggUsageLocationMap = mutableMapOf<UUID, Location>()
+    private val killTracker = KillTracker(plugin)
+    var isGameOngoing = false
 
     fun register() {
-        plugin.server.pluginManager.registerEvents(this, plugin)
+        plugin.registerEvents(this)
     }
 
     fun unregister() {
@@ -30,56 +27,141 @@ class EventHandler(private val plugin: TowersOfFortune, private val game: Game) 
     }
 
     @EventHandler
-    fun onSpawnEggUse(event: PlayerInteractEvent) {
-        if (event.action != Action.RIGHT_CLICK_BLOCK) return
-
-        if (event.item?.type?.name?.endsWith("SPAWN_EGG") != true) return
-
-        val location = event.interactionPoint
-
-        if (location == null) return
-
-        playerToMobEggUsageLocationMap[event.player.uniqueId] = location
-
-    }
-
-    @EventHandler
-    fun onCreatureSpawn(event: CreatureSpawnEvent) {
-        if (event.spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) return
-
-        val location = event.location
-
-        val playerId = playerToMobEggUsageLocationMap.entries.find {
-            it.value == location
-        }?.key ?: return
-
-        event.entity.persistentDataContainer.set(mobOwnerKey, PersistentDataType.STRING, playerId.toString())
-    }
-
-    @EventHandler
     fun onPlayerDeath(event: PlayerDeathEvent) {
         val player = event.player
 
-        player.gameMode = GameMode.SPECTATOR
-        player.inventory.clear()
-        event.isCancelled = true
+        if (game !== plugin.gameManager.getGame(player.world.name)) return
 
-        val killerName = player.lastDamageCause?.entity?.name
-        val killer = player.lastDamageCause?.entity
+        game.remainingPlayers.remove(player)
 
-        val mobOwnerName = killer?.persistentDataContainer?.get(mobOwnerKey, PersistentDataType.STRING)?.let { plugin.server.getPlayer(it) }?.name
+        player.respawnLocation = game.centerLocation
 
-        val message =
-            if (killerName == null) Messages.PLAYER_DIED.with(player.name)
-            else if (killer is Player || mobOwnerName == null) Messages.PLAYER_KILLED.with(player.name, killerName)
-            else Messages.PLAYER_KILLED_BY_SPAWNED_MOB.with(player.name, mobOwnerName, killerName)
-
-        game.players.forEach { it.sendMessage(message) }
-
-        val remainingPlayers = game.players.filter { it.gameMode == GameMode.SURVIVAL }
-
-        if (remainingPlayers.size == 1) {
-            game.end(remainingPlayers.first())
-        }
+        if (game.remainingPlayers.size == 1) game.end()
     }
+
+    @EventHandler
+    fun onPlayerRespawn(event: PlayerRespawnEvent) {
+        val player = event.player
+
+        if (game !== plugin.gameManager.getGame(player.world.name)) return
+
+        game.becomeSpectator(player)
+    }
+
+    @EventHandler
+    fun onPlayerHurt(event: EntityDamageEvent) {
+        val entity = event.entity
+
+        if (isGameOngoing) return
+        if (entity !is Player) return
+
+        if (game !== plugin.gameManager.getGame(entity.world.name)) return
+        
+        event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onBlockBreak(event: BlockBreakEvent) {
+        val player = event.player
+
+        if (isGameOngoing) return
+
+        if (game !== plugin.gameManager.getGame(player.world.name)) return
+
+        event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onPlayerLoseHunger(event: FoodLevelChangeEvent) {
+        val player = event.entity
+
+        if (isGameOngoing) return
+
+        if (game !== plugin.gameManager.getGame(player.world.name)) return
+
+        event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onPlayerDisconnect(event: PlayerQuitEvent) {
+        val player = event.player
+
+        if (game !== plugin.gameManager.getGame(player.world.name)) return
+
+        game.removePlayer(player)
+    }
+
+    @EventHandler
+    fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
+        val player = event.player
+
+        if (game !== plugin.gameManager.getGame(event.from.name)) return
+
+        game.removePlayer(player)
+    }
+
+//    @EventHandler
+//    fun onBlockPlace(event: BlockPlaceEvent) {
+//        val block = event.block
+//        val player = event.player
+//
+//        when (block.type) {
+//            Material.LAVA -> killTracker.trackPlacedHazard(block.location, player, KillTracker.HazardType.LAVA)
+//            Material.CACTUS -> killTracker.trackPlacedHazard(block.location, player, KillTracker.HazardType.CACTUS)
+//            Material.ANVIL -> killTracker.trackPlacedHazard(block.location, player, KillTracker.HazardType.ANVIL)
+//            Material.POINTED_DRIPSTONE -> killTracker.trackPlacedHazard(block.location, player, KillTracker.HazardType.DRIPSTONE)
+//            else -> return
+//        }
+//    }
+//
+//    @EventHandler
+//    fun onEntitySpawn(event: CreatureSpawnEvent) {
+//        val entity = event.entity
+//        event.spawnReason
+//        event.
+//        // Get the player who spawned the entity (from spawn egg, building, etc)
+//        player?.let { spawner ->
+//            when (entity) {
+//                is IronGolem, is SnowGolem, is Wither,
+//                is Wolf, is Cat, // Add other tameable mobs
+//                is PufferFish -> killTracker.setMobOwner(entity, spawner)
+//            }
+//        }
+//    }
+//
+//    @EventHandler
+//    fun onProjectileHit(event: ProjectileHitEvent) {
+//        val projectile = event.entity
+//
+//        if (projectile is Fireball) {
+//            val hitEntity = event.hitEntity as? Player ?: return
+//            killTracker.setProjectileDeflector(projectile, hitEntity)
+//        }
+//    }
+//
+//    @EventHandler
+//    fun onPlayerDeath(event: PlayerDeathEvent) {
+//        val victim = event.entity
+//        val lastDamage = victim.lastDamageCause ?: return
+//
+//        val killer = killTracker.getKiller(victim, lastDamage)
+//        if (killer != null) {
+//            when {
+//                // Handle different death messages based on the cause
+//                lastDamage.cause == DamageCause.ENTITY_ATTACK &&
+//                        lastDamage is EntityDamageByEntityEvent &&
+//                        lastDamage.damager is LivingEntity -> {
+//                    broadcast(Messages.PLAYER_KILLED_BY_SPAWNED_MOB.with(
+//                        victim.name,
+//                        killer.name,
+//                        lastDamage.damager.type.name.toLowerCase()
+//                    ))
+//                }
+//                else -> broadcast(Messages.PLAYER_KILLED.with(victim.name, killer.name))
+//            }
+//        } else {
+//            broadcast(Messages.PLAYER_DIED.with(victim.name))
+//        }
+//    }
+
 }

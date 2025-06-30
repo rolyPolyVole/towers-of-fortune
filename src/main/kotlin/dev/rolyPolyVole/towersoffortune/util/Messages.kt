@@ -3,6 +3,12 @@ package dev.rolyPolyVole.towersoffortune.util
 import net.kyori.adventure.text.Component
 
 enum class Messages(val message: String) {
+    GAME_CREATED("<green>Your game is being created in the world <aqua>{0}</aqua>!</green>"),
+    INVALID_ARGUMENT("<red>Invalid argument! Expected {0}, got {1}.</red>"),
+    WORLD_ALREADY_USED("<red>This world is already being used!</red>"),
+    GAME_DOES_NOT_EXIST("<red>This game does not exist!</red>"),
+    NOT_IN_GAME("<red>You are not in a game!</red>"),
+
     JOINED_GAME("<yellow><blue>{0}</blue> has joined the game!</yellow>"),
     LEFT_GAME("<yellow><blue>{0}</blue> has left the game!</yellow>"),
 
