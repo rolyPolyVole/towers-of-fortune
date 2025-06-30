@@ -47,7 +47,7 @@ dependencies {
     paperweight.paperDevBundle("$paperApiVersion-R0.1-SNAPSHOT")
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.7.0")
+    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:10.1.0")
 }
 
 val targetJavaVersion = 21
