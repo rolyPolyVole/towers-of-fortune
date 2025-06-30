@@ -1,76 +1,115 @@
 package dev.rolyPolyVole.towersoffortune.game
 
 import dev.rolyPolyVole.towersoffortune.TowersOfFortune
+import dev.rolyPolyVole.towersoffortune.data.GameSettings
+import dev.rolyPolyVole.towersoffortune.functions.createMap
 import dev.rolyPolyVole.towersoffortune.util.Messages
-import dev.rolyPolyVole.towersoffortune.util.format
-import dev.rolyPolyVole.towersoffortune.util.sendMessage
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Location
-import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.entity.Player
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 
-class Game(private val plugin: TowersOfFortune, var world: World, private val spawnLocations: List<Location>, private val startLimit: Int) {
+class Game(private val plugin: TowersOfFortune, private val settings: GameSettings) {
     private val eventHandler = EventHandler(plugin, this)
-    private var runnable = GameRunnable(plugin, this)
+    private val runnable = GameRunnable(plugin, this)
 
     val players = mutableListOf<Player>()
+    val remainingPlayers = mutableListOf<Player>()
+
     var started = false
 
-    val isFull: Boolean
-        get() = players.size == startLimit
+    lateinit var world: World
+    lateinit var spawnLocations: List<Location>
+    lateinit var centerLocation: Location
+
+    fun createWorld() {
+        spawnLocations = createMap(settings)
+        world = settings.getWorld()
+        centerLocation = Location(world, 0.0, 128.0, 0.0)
+    }
+
+    fun addPlayer(player: Player) {
+        players.add(player)
+        remainingPlayers.add(player)
+
+        resetState(player)
+        player.teleport(spawnLocations[players.indexOf(player)])
+
+        players.forEach { it.sendMessage(Messages.JOINED_GAME.with(player.name)) }
+
+        if (players.size == 8) start()
+    }
+
+    fun removePlayer(player: Player) {
+        players.remove(player)
+        remainingPlayers.remove(player)
+
+        resetState(player)
+        player.teleport(Bukkit.getWorlds().first().spawnLocation)
+
+        players.forEach { it.sendMessage(Messages.LEFT_GAME.with(player.name)) }
+
+        if (remainingPlayers.size == 1 && started) end()
+    }
+
+    fun isPlayerInGame(player: Player): Boolean {
+        return players.contains(player)
+    }
 
     fun start() {
-        started = true
-
-        refreshWorldReferences()
-
         eventHandler.register()
         runnable.start()
 
-        players.forEachIndexed { index, player -> player.teleport(spawnLocations[index]) }
-        players.forEach { it.sendMessage(Messages.GUIDE) }
-        players.forEach { it.gameMode = GameMode.SURVIVAL }
+        started = true
+        eventHandler.isGameOngoing = true
 
-        healPlayers()
+        players.forEach {
+            it.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, 2 * 20, 1))
+        }
+
+        players.forEach { it.sendMessage(Component.text("good luck")) }
     }
 
-    fun end(winner: Player) {
-        started = false
-
-        eventHandler.unregister()
-        runnable.stop()
-        runnable = GameRunnable(plugin, this)
-
-        players.forEach { it.gameMode = GameMode.SURVIVAL }
-        healPlayers()
+    fun end() {
+        val winner = remainingPlayers.first()
 
         players.forEach { it.sendMessage(Messages.PLAYER_WON.with(winner.name)) }
-        players.forEach { it.teleport(plugin.lobbyWorld.spawnLocation) }
-        players.clear()
 
-        resetMap()
-    }
+        eventHandler.isGameOngoing = false
 
-    private fun healPlayers() {
-        players.forEach {
-            it.inventory.clear()
-            it.health = 20.0
-            it.foodLevel = 20
-            it.saturation = 20.0F
+        plugin.runTaskLater(20L * 5) {
+            players.forEach(::resetState)
+            players.forEach { it.teleport(Bukkit.getWorlds().first().spawnLocation) }
+
+            eventHandler.unregister()
+            runnable.stop()
+            plugin.gameManager.unloadGame(world.name)
         }
     }
 
-    private fun resetMap() {
-        plugin.server.unloadWorld("game_1", false)
-
-        createMap(plugin)
+    fun becomeSpectator(player: Player) {
+        player.gameMode = GameMode.SPECTATOR
+        player.teleport(centerLocation)
     }
 
-    private fun refreshWorldReferences() {
-        world = plugin.server.getWorld("game_1")!!
-        spawnLocations.forEach {
-            it.world = world
-        }
+    fun resetState(player: Player) {
+        player.gameMode = GameMode.SURVIVAL
+
+        player.inventory.clear()
+
+        player.fireTicks = 0
+        player.clearActivePotionEffects()
+        player.clearActiveItem()
+
+        player.health = 20.0
+        player.foodLevel = 20
+        player.saturation = 20f
+
+        player.level = 0
+        player.exp = 0f
     }
 }
