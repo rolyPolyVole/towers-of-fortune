@@ -36,7 +36,7 @@ fun generateWorld(settings: GameSettings): World {
 fun createMap(settings: GameSettings): CreatedMapData {
     val world = generateWorld(settings)
 
-    val radius = 20
+    val radius = 21
     val radiusSquared = radius * radius
     val baseY = 64
 
