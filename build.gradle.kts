@@ -7,7 +7,7 @@ plugins {
     id("com.gradleup.shadow") version "8.3.0"
     id("xyz.jpenilla.resource-factory-paper-convention") version "1.2.0"
     id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.16"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.17"
 }
 
 group = "dev.rolyPolyVole"
@@ -15,7 +15,7 @@ version = "1.0-SNAPSHOT"
 description = "A Minecraft minigame"
 
 val pluginName = "TowersOfFortune"
-val paperApiVersion = "1.21"
+val paperApiVersion = "1.21.6"
 val mainClassPath ="$group.towersoffortune.TowersOfFortune"
 
 paperPluginYaml {
