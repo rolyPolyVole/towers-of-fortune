@@ -18,7 +18,7 @@ class LeaveGameCommand(private val plugin: TowersOfFortune) : CommandAPICommand(
     private fun executesPlayer(player: Player, args: CommandArguments) {
         val game = plugin.gameManager.getGame(player.world.name)
 
-        if (game == null) return player.sendMessage(Messages.NOT_IN_GAME.format())
+        if (game == null || !game.isPlayerInGame(player)) return player.sendMessage(Messages.NOT_IN_GAME.format())
 
         game.removePlayer(player)
     }
