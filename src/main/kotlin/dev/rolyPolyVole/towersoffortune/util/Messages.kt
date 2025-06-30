@@ -10,6 +10,7 @@ enum class Messages(val message: String) {
     NOT_IN_GAME("<red>You are not in a game!</red>"),
     ALREADY_IN_GAME("<red>You are already in a game!</red>"),
     GAME_ALREADY_STARTED("<red>The game has already started!</red>"),
+    NOT_ENOUGH_PLAYERS("<red>The game requires at least {0} players to start!</red>"),
 
     JOINED_GAME("<yellow><blue>{0}</blue> has joined the game!</yellow>"),
     LEFT_GAME("<yellow><blue>{0}</blue> has left the game!</yellow>"),

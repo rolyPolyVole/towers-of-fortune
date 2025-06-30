@@ -5,6 +5,7 @@ import dev.jorel.commandapi.CommandAPIBukkitConfig
 import dev.rolyPolyVole.towersoffortune.commands.CreateGameCommand
 import dev.rolyPolyVole.towersoffortune.commands.JoinGameCommand
 import dev.rolyPolyVole.towersoffortune.commands.LeaveGameCommand
+import dev.rolyPolyVole.towersoffortune.commands.StartGameCommand
 import dev.rolyPolyVole.towersoffortune.manager.GameManager
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
@@ -28,6 +29,7 @@ class TowersOfFortune : JavaPlugin(), Listener {
         CreateGameCommand(this)
         JoinGameCommand(this)
         LeaveGameCommand(this)
+        StartGameCommand(this)
     }
 
     override fun onDisable() {
